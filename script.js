@@ -37,9 +37,8 @@ function createFallingHearts() {
 // Gallery functions
 function openGallery() {
     document.getElementById('galleryModal').classList.remove('hidden');
-    generateThumbnails();
-    updateImageCounter();
     document.body.style.overflow = 'hidden';
+    // No need to generate thumbnails or update counter anymore
 }
 
 function closeGallery() {
@@ -49,70 +48,59 @@ function closeGallery() {
 
 function nextImage() {
     currentImageIndex = (currentImageIndex + 1) % totalImages;
-    updateCurrentImage();
-    updateImageCounter();
-    updateActiveThumbnail();
+    updateCurrentImageWithFade();
 }
 
 function previousImage() {
     currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
-    updateCurrentImage();
-    updateImageCounter();
-    updateActiveThumbnail();
+    updateCurrentImageWithFade();
 }
 
 function goToImage(index) {
     currentImageIndex = index;
-    updateCurrentImage();
-    updateImageCounter();
-    updateActiveThumbnail();
+    updateCurrentImageWithFade();
 }
 
-function updateCurrentImage() {
+function updateCurrentImageWithFade() {
     const currentImage = document.getElementById('currentImage');
-    currentImage.style.opacity = '0';
+    
+    // Fade out
+    currentImage.classList.add('image-fade-out');
     
     setTimeout(() => {
+        // Change image source
         currentImage.src = imageNames[currentImageIndex];
-        currentImage.style.opacity = '1';
-    }, 150);
+        
+        // Fade in
+        currentImage.classList.remove('image-fade-out');
+        currentImage.classList.add('image-fade-in');
+        
+        // Remove fade-in class after animation
+        setTimeout(() => {
+            currentImage.classList.remove('image-fade-in');
+        }, 500);
+    }, 250);
+}
+
+// Remove unused functions
+function updateCurrentImage() {
+    // This function is no longer needed
 }
 
 function updateImageCounter() {
-    document.getElementById('imageCounter').textContent = `${currentImageIndex + 1} / ${totalImages}`;
+    // This function is no longer needed
 }
 
 function generateThumbnails() {
-    const thumbnailsContainer = document.getElementById('thumbnails');
-    thumbnailsContainer.innerHTML = '';
-    
-    imageNames.forEach((imageName, index) => {
-        const thumbnail = document.createElement('div');
-        thumbnail.className = `thumbnail w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 ${index === currentImageIndex ? 'active' : ''}`;
-        thumbnail.onclick = () => goToImage(index);
-        
-        const img = document.createElement('img');
-        img.src = imageName;
-        img.alt = `Thumbnail ${index + 1}`;
-        img.className = 'w-full h-full object-cover';
-        img.onerror = function() {
-            this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNCQkM5Ii8+CjxwYXRoIGQ9Ik0yMCAyMEw0NCA0NE0yMCA0NEw0NCAyMCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
-        };
-        
-        thumbnail.appendChild(img);
-        thumbnailsContainer.appendChild(thumbnail);
-    });
+    // This function is no longer needed
 }
 
 function updateActiveThumbnail() {
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    thumbnails.forEach((thumb, index) => {
-        if (index === currentImageIndex) {
-            thumb.classList.add('active');
-        } else {
-            thumb.classList.remove('active');
-        }
-    });
+    // This function is no longer needed
+}
+
+function scrollToActiveThumbnail() {
+    // This function is no longer needed
 }
 
 // Keyboard navigation
@@ -166,27 +154,18 @@ function handleSwipe() {
     }
 }
 
-// Auto-play functionality (optional)
-let autoPlayInterval;
-let isAutoPlaying = false;
-
-function startAutoPlay() {
-    if (!isAutoPlaying) {
-        isAutoPlaying = true;
-        autoPlayInterval = setInterval(nextImage, 3000);
-    }
-}
-
-function stopAutoPlay() {
-    if (isAutoPlaying) {
-        isAutoPlaying = false;
-        clearInterval(autoPlayInterval);
-    }
-}
+// Remove unused auto-play functions
+// Auto-play functionality removed for better mobile UX
 
 // Pause autoplay when user interacts
-document.getElementById('galleryModal').addEventListener('mouseenter', stopAutoPlay);
-document.getElementById('galleryModal').addEventListener('mouseleave', startAutoPlay);
+// (Auto-play functionality removed for better UX)
+
+// Close modal when clicking outside
+document.getElementById('galleryModal').addEventListener('click', function(event) {
+    if (event.target === this) {
+        closeGallery();
+    }
+});
 
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -205,6 +184,34 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         document.body.classList.add('loaded');
     }, 100);
+    
+    // Add swipe detection for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    const galleryModal = document.getElementById('galleryModal');
+    
+    galleryModal.addEventListener('touchstart', function(event) {
+        touchStartX = event.changedTouches[0].screenX;
+    });
+    
+    galleryModal.addEventListener('touchend', function(event) {
+        touchEndX = event.changedTouches[0].screenX;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                nextImage(); // Swipe left, go to next image
+            } else {
+                previousImage(); // Swipe right, go to previous image
+            }
+        }
+    }
 });
 
 // Message animation
