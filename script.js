@@ -239,10 +239,6 @@ function startTypingSequence() {
     }, 1000);
 }
 
-// Magic Dust System
-let animationId = 1;
-
-
 
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', function () {
