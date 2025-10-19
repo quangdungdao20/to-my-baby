@@ -241,11 +241,11 @@ Anh chúc em một ngày 20/10 thật hạnh phúc, ngập tràn tiếng cười
 
 Dù cuộc sống có bận rộn thế nào, anh vẫn muốn dành cho em một góc nhỏ trong tim — nơi chỉ có em, và chỉ thuộc về em.
 
-<p>💖 Yêu em, hôm nay, ngày mai, và mãi mãi 💖</p>`
+💖 Yêu em, Nguyễn Thị Hường   💖`
 };
 
 // Typing effect functions
-function typeWriter(element, text, speed = 50, callback = null) {
+function typeWriter(element, text, speed = 900, callback = null) {
     let i = 0;
     element.classList.add('typing-cursor');
 
